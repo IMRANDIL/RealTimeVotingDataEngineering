@@ -1,5 +1,6 @@
 from database import connect_to_database, create_tables, fetch_All_Candidates
 from utils_db import generate_candidate
+
 if __name__ == "__main__":
     # Connect to the database
     conn = connect_to_database()
@@ -21,6 +22,27 @@ if __name__ == "__main__":
             if len(candidates) == 0:
                 for i in range(3):
                     candidate = generate_candidate(i,3)
+                    print('candidate_______________', candidate)
+                    
+                    # Execute the INSERT INTO statement with proper formatting
+                    curr.execute("""
+                                 INSERT INTO candidates(
+                                     candidate_id,
+                                     candidate_name,
+                                     party_affiliation,
+                                     biography,
+                                     campaign_platform,
+                                     photo_url
+                                 )
+                                 VALUES(
+                                     %(candidate_id)s,
+                                     %(candidate_name)s,
+                                     %(party_affiliation)s,
+                                     %(biography)s,
+                                     %(campaign_platform)s,
+                                     %(photo_url)s
+                                 )
+                                 """, candidate)  # Pass the candidate dictionary as parameters
             
             # Commit the transaction
             conn.commit()
