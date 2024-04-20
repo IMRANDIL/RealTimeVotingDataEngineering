@@ -18,6 +18,8 @@ services:
     volumes:
       - zookeeper_data:/var/lib/zookeeper/data
       - zookeeper_logs:/var/lib/zookeeper/logs
+    networks:
+      - backend
 
   broker:
     image: confluentinc/cp-kafka:7.4.0
@@ -50,6 +52,8 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
       - kafka_logs:/var/lib/kafka/logs
+    networks:
+      - backend
 
   postgres:
     image: postgres:latest
@@ -67,24 +71,33 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
 
-#  spark-master:
-#    image: bitnami/spark:latest
-#    command: bin/spark-class org.apache.spark.deploy.master.Master
-#    ports:
-#      - "9090:8080"
-#      - "7077:7077"
+  spark-master:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    networks:
+      - backend
 
-#  spark-worker:
-#    image: bitnami/spark:latest
-#    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
-#    depends_on:
-#      - spark-master
-#    environment:
-#      SPARK_MODE: worker
-#      SPARK_WORKER_CORES: 2
-#      SPARK_WORKER_MEMORY: 1g
-#      SPARK_MASTER_URL: spark://spark-master:7077
+  spark-worker:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+    networks:
+      - backend
+
+networks:
+  backend:
 
 volumes:
   zookeeper_data:
