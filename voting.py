@@ -6,6 +6,9 @@ from database import connect_to_database
 if __name__ == "__main__":
     conn = connect_to_database()
     
+    # select row_to_json(col)
+    # from (select * from candidates) as col; _________This would also work
+    
     if conn:
         try:
             cursor = conn.cursor()
@@ -23,7 +26,10 @@ if __name__ == "__main__":
 FROM candidates;
 """)
             candidates = [candidate[0] for candidate in cursor.fetchall()]
-            print(candidates)
+            
+            if len(candidates) == 0:
+                raise Exception("No candidates found in the database.")
+            
             
         except Exception as e:
             # Print a generic error message for any exceptions
