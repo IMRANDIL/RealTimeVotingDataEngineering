@@ -65,3 +65,25 @@ def create_tables(conn, cur):
         # Commit the transaction if all statements execute successfully
         conn.commit()
         print("Tables created successfully!")
+
+
+def fetch_All_Candidates(conn, curr):
+    try:
+        # Begin the transaction
+        with conn:
+            # Execute the SELECT statement to fetch all candidates
+            curr.execute("SELECT * FROM candidates")
+            
+            # Fetch all rows from the result set
+            candidates = curr.fetchall()
+            
+            # Return the fetched candidates
+            return candidates
+    except psycopg2.DatabaseError as e:
+        # If an error occurs, print an error message and return None
+        print(f"DatabaseError: {e}")
+        return None
+    except Exception as e:
+        # If any other exception occurs, print an error message and return None
+        print(f"An error occurred: {e}")
+        return None
