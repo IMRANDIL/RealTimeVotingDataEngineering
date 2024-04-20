@@ -153,3 +153,7 @@ def insert_voters(conn, curr, voters_data):
     except Exception as e:
         conn.rollback()
         print(f"Error occurred while inserting voter data: {e}")
+        
+        
+        
+

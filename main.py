@@ -1,9 +1,33 @@
+import json
+from confluent_kafka import SerializingProducer
 from database import connect_to_database, create_tables, fetch_All_Candidates
 from utils_db import generate_candidate, generate_voter_data, insert_voters
+
+
+
+
+
+
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Message delivery failed: {err}")
+    else:
+        print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+
+
+
+
+
+
 
 if __name__ == "__main__":
     # Connect to the database
     conn = connect_to_database()
+    
+    #add kafka into picture now
+    producer = SerializingProducer({
+        'bootstrap.servers': 'localhost:9092'
+    })
 
     if conn:
         try:
@@ -48,6 +72,13 @@ if __name__ == "__main__":
             voters_data = []
             for i in range(1000):
                 voter_data = generate_voter_data()
+                #produce to voters_topic the data now
+                producer.produce(
+                    "voters_topic",
+                    key=voter_data['voter_id'],
+                    value=json.dumps(voter_data),
+                    on_delivery=delivery_report
+                )
                 if voter_data:
                     voters_data.append(voter_data)
                     if len(voters_data) == 60:
