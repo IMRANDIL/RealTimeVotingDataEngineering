@@ -1,5 +1,5 @@
 from database import connect_to_database, create_tables, fetch_All_Candidates
-from utils_db import generate_candidate
+from utils_db import generate_candidate, generate_voter_data, insert_voters
 
 if __name__ == "__main__":
     # Connect to the database
@@ -13,7 +13,7 @@ if __name__ == "__main__":
             # Create a cursor object
             curr = conn.cursor()
             
-            # Call the function to create tables
+            # Call the function to create tables 
             create_tables(conn, curr)
             
             # Fetch all candidates
@@ -44,6 +44,10 @@ if __name__ == "__main__":
                                  )
                                  """, candidate)  # Pass the candidate dictionary as parameters
             
+            # generate voters data now
+            for i in range(10000):
+                voter_data = generate_voter_data()
+                insert_voters(conn, curr, voter_data)
             # Commit the transaction
             conn.commit()
             
