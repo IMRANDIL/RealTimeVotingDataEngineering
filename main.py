@@ -68,26 +68,30 @@ if __name__ == "__main__":
                                  )
                                  """, candidate)  # Pass the candidate dictionary as parameters
             
-            # generate voters data now
+           # Generate voters data now
             voters_data = []
+            candidate_ids_set = set()  # Set to keep track of unique candidate IDs in the batch
             for i in range(1000):
                 voter_data = generate_voter_data()
-                #produce to voters_topic the data now
-                producer.produce(
-                    "voters_topic",
-                    key=voter_data['voter_id'],
-                    value=json.dumps(voter_data),
-                    on_delivery=delivery_report
-                )
                 if voter_data:
-                    voters_data.append(voter_data)
-                    if len(voters_data) == 60:
-                        insert_voters(conn, curr, voters_data)
-                        voters_data = []
-            
-            # Insert remaining voters if any
-            if voters_data:
-                insert_voters(conn, curr, voters_data)
+                    candidate_id = voter_data['voter_id']
+                    # Check if the candidate ID is not in the set already
+                    if candidate_id not in candidate_ids_set:
+                        # Add the candidate ID to the set
+                        candidate_ids_set.add(candidate_id)
+                        # Produce to voters_topic
+                        producer.produce(
+                            "voters_topic",
+                            key=voter_data['voter_id'],
+                            value=json.dumps(voter_data),
+                            on_delivery=delivery_report
+                        )
+                        voters_data.append(voter_data)
+                        # If the batch size reaches 60 or the last iteration, insert the voters data
+                        if len(voters_data) == 60 or i == 999:
+                            insert_voters(conn, curr, voters_data)
+                            print('length of voters_data', len(voters_data))
+                            voters_data = []  # Reset the voters data list
             # Commit the transaction
             conn.commit()
             
@@ -97,3 +101,6 @@ if __name__ == "__main__":
         finally:
             # Close the database connection
             conn.close()
+            
+            # Flush any remaining buffered messages to Kafka
+            producer.flush()
