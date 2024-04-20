@@ -45,9 +45,18 @@ if __name__ == "__main__":
                                  """, candidate)  # Pass the candidate dictionary as parameters
             
             # generate voters data now
-            for i in range(10000):
+            voters_data = []
+            for i in range(1000):
                 voter_data = generate_voter_data()
-                insert_voters(conn, curr, voter_data)
+                if voter_data:
+                    voters_data.append(voter_data)
+                    if len(voters_data) == 60:
+                        insert_voters(conn, curr, voters_data)
+                        voters_data = []
+            
+            # Insert remaining voters if any
+            if voters_data:
+                insert_voters(conn, curr, voters_data)
             # Commit the transaction
             conn.commit()
             

@@ -41,7 +41,7 @@ def generate_voter_data():
                 'date_of_birth': sample_voter_data['dob']['date'],
                 'gender': sample_voter_data['gender'],
                 'nationality': sample_voter_data['nat'],
-                'registration_number': sample_voter_data['registered']['number'],
+                'registration_number': sample_voter_data['login']['username'],
                 'address_street': sample_voter_data['location']['street']['name'],
                 'address_city': sample_voter_data['location']['city'],
                 'address_state': sample_voter_data['location']['state'],
@@ -61,10 +61,57 @@ def generate_voter_data():
         return None
     
     
-def insert_voters(conn, curr, voter_data):
+# def insert_voters(conn, curr, voter_data):
+#     try:
+#         with conn:
+#             curr.execute("""
+#                          INSERT INTO voters(
+#                              voter_id,
+#                              voter_name,
+#                              date_of_birth,
+#                              gender,
+#                              nationality,
+#                              registration_number,
+#                              address_street,
+#                              address_city,
+#                              address_state,
+#                              address_country,
+#                              address_postcode,
+#                              email,
+#                              phone_number,
+#                              cell_number,
+#                              picture,
+#                              registered_age
+#                          )
+#                          VALUES(
+#                              %(voter_id)s,
+#                              %(voter_name)s,
+#                              %(date_of_birth)s,
+#                              %(gender)s,
+#                              %(nationality)s,
+#                              %(registration_number)s,
+#                              %(address_street)s,
+#                              %(address_city)s,
+#                              %(address_state)s,
+#                              %(address_country)s,
+#                              %(address_postcode)s,
+#                              %(email)s,
+#                              %(phone_number)s,
+#                              %(cell_number)s,
+#                              %(picture)s,
+#                              %(registered_age)s
+#                          )
+#                          """, voter_data)
+#         print("Voter data inserted successfully!")
+#     except Exception as e:
+#         conn.rollback()
+#         print(f"Error occurred while inserting voter data: {e}")
+
+
+def insert_voters(conn, curr, voters_data):
     try:
         with conn:
-            curr.execute("""
+            curr.executemany("""
                          INSERT INTO voters(
                              voter_id,
                              voter_name,
@@ -101,7 +148,7 @@ def insert_voters(conn, curr, voter_data):
                              %(picture)s,
                              %(registered_age)s
                          )
-                         """, voter_data)
+                         """, voters_data)
         print("Voter data inserted successfully!")
     except Exception as e:
         conn.rollback()
