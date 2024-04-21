@@ -18,7 +18,7 @@ if __name__ == "__main__":
     vote_schema = StructType([
         StructField("voter_id", StringType(), True),
         StructField("voter_name", StringType(), True),
-        StructField("date_of_birth", StringType(), True),  # Keep it as StringType for now
+        StructField("date_of_birth", TimestampType(), True),
         StructField("gender", StringType(), True),
         StructField("nationality", StringType(), True),
         StructField("registration_number", StringType(), True),
@@ -32,6 +32,13 @@ if __name__ == "__main__":
         StructField("cell_number", StringType(), True),
         StructField("picture", StringType(), True),
         StructField("registered_age", IntegerType(), True),
+        StructField("candidate_id", StringType(), True),
+        StructField("candidate_name", StringType(), True),
+        StructField("party_affiliation", StringType(), True),
+        StructField("biography", StringType(), True),
+        StructField("campaign_platform", StringType(), True),
+        StructField("photo_url", StringType(), True),
+        StructField("voting_time", TimestampType(), True),
         StructField("vote", IntegerType(), True)
     ])
 

@@ -22,7 +22,7 @@ COMMIT_INTERVAL = 10
 # Kafka consumer instance
 consumer = Consumer(KAFKA_CONF | {
     'group.id': GROUP_ID,
-    'auto.offset': 'earliest',
+   'auto.offset.reset': 'earliest',
     'enable.auto.commit': False
 })
 
