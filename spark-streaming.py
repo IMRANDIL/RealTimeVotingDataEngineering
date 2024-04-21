@@ -7,8 +7,9 @@ if __name__ == "__main__":
     spark = (SparkSession.builder
              .appName("ElectionAnalysis")
              .master("local[*]")  # Use local Spark execution with all available cores
+            #  .master("spark://spark-master:7077")  # Connect to Spark master running in the container
              .config("spark.jars.packages",
-                     "org.apache.spark:spark-sql-kafka-0-10_3.5.1")  # Spark-Kafka integration
+                     "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.1")  # Spark-Kafka integration
              .config("spark.jars",
                      "C:\\Users\\imran\\OneDrive\\Desktop\\RealTimeVotingDataEngineering\\postgresql-42.7.3.jar")  # PostgreSQL driver
              .config("spark.sql.adaptive.enabled", "false")  # Disable adaptive query execution
