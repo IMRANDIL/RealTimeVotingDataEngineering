@@ -53,7 +53,6 @@ def fetch_candidates(cursor):
     """)
     return [candidate[0] for candidate in cursor.fetchall()]
 
-
 def process_vote(voter, candidates, cursor):
     """Process a vote."""
     chosen_candidate = random.choice(candidates)
@@ -69,10 +68,32 @@ def process_vote(voter, candidates, cursor):
         cursor.execute("""
             INSERT INTO votes (voter_id, candidate_id, voting_time)
             VALUES (%(voter_id)s, %(candidate_id)s, %(voting_time)s)
+            ON CONFLICT (voter_id) DO NOTHING
         """, vote)
         return vote
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+# def process_vote(voter, candidates, cursor):
+#     """Process a vote."""
+#     chosen_candidate = random.choice(candidates)
+#     vote = {
+#         **voter,
+#         **chosen_candidate,
+#         'voting_time': datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+#         'vote': 1
+#     }
+
+#     try:
+#         print(f"User {vote['voter_id']} is voting for candidate: {vote['candidate_id']}")
+#         cursor.execute("""
+#             INSERT INTO votes (voter_id, candidate_id, voting_time)
+#             VALUES (%(voter_id)s, %(candidate_id)s, %(voting_time)s)
+#         """, vote)
+#         return vote
+#     except Exception as e:
+#         print(f"An error occurred: {e}")
 
 
 def main():

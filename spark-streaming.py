@@ -72,7 +72,7 @@ if __name__ == "__main__":
         .format("kafka") \
         .option("kafka.bootstrap.servers", "localhost:9092") \
         .option("topic", "aggregated_votes_per_candidate") \
-        .option("checkpointLocation", "/Users/airscholar/Dev/Projects/Python/Voting/checkpoints/checkpoint1") \
+        .option("checkpointLocation", "C:\Users\imran\OneDrive\Desktop\RealTimeVotingDataEngineering\checkpoints\checkpoint1") \
         .outputMode("update") \
         .start()
 
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         .format("kafka") \
         .option("kafka.bootstrap.servers", "localhost:9092") \
         .option("topic", "aggregated_turnout_by_location") \
-        .option("checkpointLocation", "/Users/airscholar/Dev/Projects/Python/Voting/checkpoints/checkpoint2") \
+        .option("checkpointLocation", "C:\Users\imran\OneDrive\Desktop\RealTimeVotingDataEngineering\checkpoints\checkpoint2") \
         .outputMode("update") \
         .start()
 
