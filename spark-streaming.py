@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col, sum as _sum
+from pyspark.sql.functions import from_json, col, sum as _sum, to_timestamp
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
 
 if __name__ == "__main__":
@@ -8,7 +8,7 @@ if __name__ == "__main__":
              .appName("ElectionAnalysis")
              .master("local[*]")  # Use local Spark execution with all available cores
              .config("spark.jars.packages",
-                     "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.0")  # Spark-Kafka integration
+                     "org.apache.spark:spark-sql-kafka-0-10_3.5.1")  # Spark-Kafka integration
              .config("spark.jars",
                      "/Users/airscholar/Dev/Projects/Python/Voting/postgresql-42.7.1.jar")  # PostgreSQL driver
              .config("spark.sql.adaptive.enabled", "false")  # Disable adaptive query execution
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     vote_schema = StructType([
         StructField("voter_id", StringType(), True),
         StructField("voter_name", StringType(), True),
-        StructField("date_of_birth", TimestampType(), True),
+        StructField("date_of_birth", StringType(), True),  # Keep it as StringType for now
         StructField("gender", StringType(), True),
         StructField("nationality", StringType(), True),
         StructField("registration_number", StringType(), True),
@@ -45,6 +45,9 @@ if __name__ == "__main__":
         .selectExpr("CAST(value AS STRING)") \
         .select(from_json(col("value"), vote_schema).alias("data")) \
         .select("data.*")
+
+    # Parse the "date_of_birth" field
+    votes_df = votes_df.withColumn("date_of_birth", to_timestamp(col("date_of_birth"), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
 
     # Data preprocessing: type casting and watermarking
     votes_df = votes_df.withColumn("voting_time", col("voting_time").cast(TimestampType())) \
